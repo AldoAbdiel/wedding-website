@@ -1,5 +1,53 @@
 $(document).ready(function () {
 
+    /***************** Background Music ******************/
+    var audio = document.getElementById('wedding-music');
+    var musicToggle = document.getElementById('music-toggle');
+    var isPlaying = false;
+    var hasInteracted = false;
+
+    // Function to start playing audio
+    function playAudio() {
+        audio.play().then(function() {
+            isPlaying = true;
+            musicToggle.classList.add('playing');
+        }).catch(function(error) {
+            // Silently fail if autoplay blocked
+        });
+    }
+
+    // Try to autoplay immediately
+    playAudio();
+
+    // Start audio on ANY user interaction (very aggressive)
+    function startAudioOnInteraction() {
+        if (!hasInteracted) {
+            hasInteracted = true;
+            playAudio();
+        }
+    }
+
+    // Listen to multiple interaction events
+    document.addEventListener('click', startAudioOnInteraction, {once: true});
+    document.addEventListener('touchstart', startAudioOnInteraction, {once: true});
+    document.addEventListener('keydown', startAudioOnInteraction, {once: true});
+    document.addEventListener('scroll', startAudioOnInteraction, {once: true});
+    document.addEventListener('mousemove', startAudioOnInteraction, {once: true});
+
+    // Music toggle button
+    musicToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hasInteracted = true;
+
+        if (isPlaying) {
+            audio.pause();
+            isPlaying = false;
+            musicToggle.classList.remove('playing');
+        } else {
+            playAudio();
+        }
+    });
+
     /***************** Waypoints ******************/
 
     $('.wp1').waypoint(function () {
